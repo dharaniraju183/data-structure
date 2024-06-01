@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure for a file node
+typedef struct FileNode {
+    char name[100];
+    struct FileNode *left;
+    struct FileNode *right;
+} FileNode;
+
+// Function to create a new file node
+FileNode *createFileNode(const char *name) {
+    FileNode *newNode = (FileNode *)malloc(sizeof(FileNode));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    strcpy(newNode->name, name);
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a new file into the file system
+FileNode *insertFile(FileNode *root, const char *name) {
+    if (root == NULL) {
+        return createFileNode(name);
+    }
+
+    if (strcmp(name, root->name) < 0) {
+        root->left = insertFile(root->left, name);
+    } else {
+        root->right = insertFile(root->right, name);
+    }
+
+    return root;
+}
+
+// Function to display the file system hierarchy in inorder traversal
+void displayFileSystem(FileNode *root, int level) {
+    if (root == NULL) {
+        return;
+    }
+
+    displayFileSystem(root->right, level + 1);
+    for (int i = 0; i < level; i++) {
+        printf("\t");
+    }
+    printf("%s\n", root->name);
+    displayFileSystem(root->left, level + 1);
+}
+
+int main() {
+    FileNode *root = NULL;
+
+    // Inserting files into the file system
+    root = insertFile(root, "Folder1");
+    insertFile(root, "File1.txt");
+    insertFile(root, "File2.txt");
+    insertFile(root, "Folder2");
+    insertFile(root, "Folder3");
+    insertFile(root, "Folder2/File3.txt");
+
+    // Displaying the file system hierarchy
+    printf("File System Hierarchy:\n");
+    displayFileSystem(root, 0);
+
+    // Freeing memory
+    // (Implementation of deallocation is not included in this example)
+    
+    return 0;
+}
